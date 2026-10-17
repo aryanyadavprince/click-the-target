@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click the Target</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #101827;
+      color: white;
+      margin: 0;
+      padding: 30px 15px;
+    }
+
+    h1 {
+      color: #60a5fa;
+    }
+
+    .stats {
+      font-size: 20px;
+      margin: 20px;
+    }
+
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    #start {
+      background: #60a5fa;
+      color: #101827;
+      font-weight: bold;
+    }
+
+    #arena {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      height: 350px;
+      margin: 25px auto;
+      background: #263449;
+      border: 2px solid #60a5fa;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    #target {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #fb7185;
+      border: 3px solid white;
+      cursor: pointer;
+      display: none;
+      box-sizing: border-box;
+    }
+
+    #message {
+      color: #a7f3d0;
+      min-height: 24px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🎯 Click the Target</h1>
+  <p>Click the target as many times as you can!</p>
+
+  <div class="stats">
+    Score: <span id="score">0</span>
+    &nbsp; | &nbsp;
+    Time: <span id="time">30</span>s
+  </div>
+
+  <button id="start">Start Game</button>
+
+  <div id="arena">
+    <button id="target" aria-label="Click target"></button>
+  </div>
+
+  <h3 id="message">Ready? Let's play!</h3>
+
+  <script>
+    const startButton = document.getElementById("start");
+    const target = document.getElementById("target");
+    const arena = document.getElementById("arena");
+    const scoreText = document.getElementById("score");
+    const timeText = document.getElementById("time");
+    const message = document.getElementById("message");
+
+    let score = 0;
+    let timeLeft = 30;
+    let timer;
+    let playing = false;
+
+    function moveTarget() {
+      const maxX = arena.clientWidth - target.offsetWidth;
+      const maxY = arena.clientHeight - target.offsetHeight;
+
+      target.style.left = Math.random() * maxX + "px";
+      target.style.top = Math.random() * maxY + "px";
+    }
+
+    function endGame() {
+      playing = false;
+      clearInterval(timer);
+      target.style.display = "none";
+      startButton.disabled = false;
+      startButton.textContent = "Play Again";
+      message.textContent = "Game over! Your score: " + score;
+    }
+
+    startButton.addEventListener("click", () => {
+      clearInterval(timer);
+      score = 0;
+      timeLeft = 30;
+      playing = true;
+
+      scoreText.textContent = score;
+      timeText.textContent = timeLeft;
+      message.textContent = "Go! Click the target!";
+      startButton.disabled = true;
+      target.style.display = "block";
+      moveTarget();
+
+      timer = setInterval(() => {
+        timeLeft--;
+        timeText.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+          endGame();
+        }
+      }, 1000);
+    });
+
+    target.addEventListener("click", () => {
+      if (!playing) return;
+
+      score++;
+      scoreText.textContent = score;
+      moveTarget();
+    });
+  </script>
+</body>
+</html>
